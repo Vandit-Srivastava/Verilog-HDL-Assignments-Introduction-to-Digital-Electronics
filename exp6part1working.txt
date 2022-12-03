@@ -1,0 +1,17 @@
+module counter(input clock, output q1,q2);      //mod3 counter
+	wire t;
+	toggle_ff ff1(.clk(clock),.nclr(t),.q(q1));
+	toggle_ff ff2(.clk(q1),.nclr(t),.q(q2));	
+	assign t=~(q1&q2);
+endmodule
+
+module toggle_ff(input clk,nclr, output reg q,nq);
+    always @ (negedge clk, negedge nclr)
+    begin
+    if (!nclr)
+        q<=0;
+    else
+        q<=~q;
+    nq<=~q;
+    end
+endmodule

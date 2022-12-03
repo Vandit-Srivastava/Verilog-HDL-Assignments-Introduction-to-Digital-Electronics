@@ -1,0 +1,38 @@
+module counter(input clock, output [3:0]q);     //gray code counter
+    wire s3,s2,s1,s0,r3,r2,r1,r0;
+    assign s3=(q[2])&&(~q[1])&&(~q[0]);
+    assign r3=(~q[2])&&(~q[1])&&(~q[0]);
+    assign s2=(~q[3])&&(q[1])&&(~q[0]);
+    assign r2=(q[3])&&(q[1])&&(~q[0]);
+    assign s1=(~q[3])&&(~q[2])&&(q[0])||(q[3])&&(q[2])&&(q[0]);
+    assign r1=(~q[3])&&(q[2])&&(q[0])||(q[3])&&(~q[2])&&(q[0]);
+    assign s0=(~q[3])&&(~q[2])&&(~q[1])||(~q[3])&&(q[2])&&(q[1])||(q[3])&&(q[2])&&(~q[1])||(q[3])&&(~q[2])&&(q[1]);
+    assign r0=(~q[3])&&(~q[2])&&(q[1])||(~q[3])&&(q[2])&&(~q[1])||(q[3])&&(q[2])&&(q[1])||(q[3])&&(~q[2])&&(~q[1]);
+    sr_ff ff3(.clk(clock),.s(s3),.r(r3),.q(q[3]));
+    sr_ff ff2(.clk(clock),.s(s2),.r(r2),.q(q[2]));
+    sr_ff ff1(.clk(clock),.s(s1),.r(r1),.q(q[1]));
+    sr_ff ff0(.clk(clock),.s(s0),.r(r0),.q(q[0]));
+    
+endmodule
+
+module sr_ff(input s,r,clk, output reg q,nq);
+    always @ (posedge clk)
+    begin
+    if (s && r) begin
+        q<=1;
+        nq<=1;
+        end
+    else if (!s && r) begin
+        q<=0;
+        nq<=1;
+        end
+    else if (s && !r) begin
+        q<=1;
+        nq<=0;
+        end
+    else if (!s && !r) begin
+        q<=q;
+        nq<=nq;
+        end
+    end
+endmodule
